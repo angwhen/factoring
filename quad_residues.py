@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
 
 def get_residues(N):
     res_list = []
@@ -10,17 +12,17 @@ def get_residues(N):
     return res_list
 
 
-max_range = 50
-mat = np.zeros([max_range,max_range])
-for N in xrange(1,max_range+1):
-    for res in get_residues(N):
-        mat[res][N-1] += 1
+def residues_heatmap(max_range):
+    mat = np.zeros([max_range,max_range])
+    for N in xrange(1,max_range+1):
+        for res in get_residues(N):
+            mat[res][N-1] += 1
 
-import matplotlib.pyplot as plt
-import seaborn as sns; sns.set()
+    ax = sns.heatmap(mat)
+    ax.invert_yaxis()
+    ax.set_ylabel("N")
+    ax.set_xlabel("residues")
+    plt.show()
+    return mat
 
-ax = sns.heatmap(mat)
-ax.invert_yaxis()
-ax.set_ylabel("N")
-ax.set_xlabel("residues")
-plt.show()
+residues_heatmap(100)
