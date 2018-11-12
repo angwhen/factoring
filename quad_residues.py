@@ -25,4 +25,6 @@ def residues_heatmap(max_range):
     plt.show()
     return mat
 
-residues_heatmap(100)
+mat = residues_heatmap(20)
+
+#want to identify what those diagonals are
