@@ -14,10 +14,11 @@ def get_factors(N, with_quad = False):
     pi = 0
     if with_quad:
         resN = quad_residues.get_residues(N)
-        nonSquareResN = {}
-        for r in resN:
-            if math.sqrt(r) * math.sqrt(r) != r:
-                nonSquareResN[r] = quad_residues.get_residues(r)
+        nonSquareResN = []
+        for res in resN:
+            if res != math.sqrt(res) * math.sqrt(res):
+                nonSquareResN.append(res)
+        print nonSquareResN
     factors = []
     p = 2
     while (p <= math.sqrt(N)):
@@ -30,13 +31,13 @@ def get_factors(N, with_quad = False):
             bad = True
             while (with_quad and bad):
                 bad = False
-                for r in nonSquareResN.keys():
-                    for rr in nonSquareResN[r]:
-                        if p % r != rr:
-                            bad = True
+                for r in nonSquareResN:
+                    res = min(r % p, p %r)
+                    if res != math.sqrt(res) * math.sqrt(res):
+                        bad = True
                 if not bad:
                     break
-                print "p: %d was not possible" %p
+#                print "p: %d was not possible" %p
                 pi += 1
                 p = primes_list[pi]
     if m != 1:
@@ -44,5 +45,5 @@ def get_factors(N, with_quad = False):
     return factors
 
 
-print get_factors(int(sys.argv[1]),with_quad=True)
+print get_factors(int(sys.argv[1]),with_quad=False)
 

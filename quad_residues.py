@@ -9,6 +9,7 @@ def get_residues(N):
         res = sq % N
         if res != 0:
             res_list.append(res)
+    print res_list
     return res_list
 
 
@@ -25,6 +26,6 @@ def residues_heatmap(max_range):
     plt.show()
     return mat
 
-mat = residues_heatmap(20)
+mat = residues_heatmap(30)
 
 #want to identify what those diagonals are
