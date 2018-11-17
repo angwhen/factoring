@@ -8,6 +8,7 @@ def get_primes():
         for line in f:
             p_list.append(int(line.split(",")[1]))
     return p_list
+
 def get_factors(N, with_quad = False):
     primes_list = get_primes()
     m = N
