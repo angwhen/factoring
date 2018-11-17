@@ -7,10 +7,12 @@ import math
 def is_square(r):
     if r < 0:
         return False
-    return math.sqrt(r)*math.sqrt(r) == r 
+    return int(math.sqrt(r)) == math.sqrt(r) 
 
 def get_diff_squares_XY(N,ret_num_steps=False):
     """returns X and Y st X^2 - Y^2 = N"""
+    if N % 2 == 0:
+        raise ValueError("Must be given odd N")
     x = int(math.floor(math.sqrt(N)))
     t = 2*x+1
     r = x*x - N
@@ -19,6 +21,7 @@ def get_diff_squares_XY(N,ret_num_steps=False):
         r +=t
         t += 2
         num_steps +=1
+        
     x = (t-1)/2
     y = int(math.sqrt(r))
     if ret_num_steps:
@@ -30,7 +33,7 @@ def diff_squares_graph(upTo=10):
     Y_list = []
     N_list = []
     num_steps_list = []
-    for N in xrange(1,upTo):
+    for N in xrange(1,upTo,2): #only for odd
         x,y,num_steps = get_diff_squares_XY(N,True)
         X_list.append(x)
         Y_list.append(y)
@@ -53,4 +56,4 @@ def diff_squares_graph(upTo=10):
     fig.savefig("diff_squares_steps_up_to_%d.png"%upTo)
     plt.show()
 
-#diff_squares_graph(1000)
+diff_squares_graph(1000)

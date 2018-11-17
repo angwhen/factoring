@@ -43,4 +43,4 @@ def trial_division_heatmap(max_range):
     plt.show()
     return mat
 
-trial_division_heatmap(30)
+#trial_division_heatmap(30)
