@@ -4,7 +4,13 @@ def is_square(x):
     return x > 0 and int(math.sqrt(x)) == math.sqrt(x)
 
 def gcd(A,B):
-    return 1 #TODO
+    A = int(A)
+    B = int(B)
+    while B != A and  B != 0:
+        temp = B
+        B = A % B
+        A = temp
+    return A
 
 def harts_one_line_algo(N,L=-1):
     if L == -1:
@@ -14,7 +20,12 @@ def harts_one_line_algo(N,L=-1):
         m = (s*s) % N
         if (is_square(m)):
             break
-    t   = math.sqrt(m)
-    return gcd(s-t,N) #a factor of N
+    t = math.sqrt(m)
+    f1 = gcd(s-t,N) 
+    f2 = N/f1
+    return f1,f2
+
 for N in xrange(2,30):
     print N,harts_one_line_algo(N)
+
+
