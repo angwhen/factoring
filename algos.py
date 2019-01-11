@@ -133,6 +133,7 @@ def harts_one_line(N):
         factors.extend(leftover_factors)
     return factors, steps, 0
 
+#https://programmingpraxis.com/2017/08/22/lehmans-factoring-algorithm/
 def lehmans_var_of_fermat(N):
     return [],0,0
 
