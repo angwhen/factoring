@@ -1,4 +1,5 @@
 import math
+import random
 """all methods return factors, num_steps, num_unfactored
 num_unfactored of the last factors are not prime"""
 
@@ -13,6 +14,7 @@ def get_primes():
 def is_square(x):
     return x >= 0 and int(math.sqrt(x)) == math.sqrt(x)
 
+# steps is number of MOD operations
 def gcd(A,B):
     A, B = int(A), int(B)
     steps = 0
@@ -135,14 +137,104 @@ def harts_one_line(N):
 
 #https://programmingpraxis.com/2017/08/22/lehmans-factoring-algorithm/
 def lehmans_var_of_fermat(N):
+    s3n = ceil(n ** (1.0/3.0))
+    trial_factors, steps, num_unfactored = trial_division(N,s3n)
+    
+    if num_unfactored == 1: #could only be 0 or 1
+        for k in xrange(1,s3n+1):
+            sk = 2.0 * sqrt(k*n)
+            for a in xrange(ceil(sk),floor(sk+n**(1.0/6.0) / (4.0 * sqrt(k)))+1):
+                b = a*a - 4*k*n
+                if is_square(b):
+                    my_gcd, gcd_steps = gcd(a+isqrt(b),n)
+                    steps += gcd_steps
     return [],0,0
 
 def lehmers_factoring_method(N):
     return [],0,0
 
+def pollards_rho_method_helper(N,steps=0):
+    b = random.randint(1,N-3)
+    s = random.randint(0,N-1)
+    A, B, g  = s,s,1
+    while (g == 1):
+        A = A*A + b
+        B = (B*B+b)*(B*B+b)+b
+        g, g_steps = gcd(A-B,N)
+        steps += g_steps
+    if g < N:
+        return g, N/g, steps
+    else: #continue until get a result
+        return pollards_rho_method_helper(N,steps)
+
+#steps is # of MOD operations
 def pollards_rho_method(N):
-    return [],0,0
+    unfactored = [N]
+    steps, factors = 0, []
+    primes_list = get_primes()
+    while len(unfactored) > 0:
+        n = unfactored.pop()
+        if n in primes_list:
+            factors.append(n)
+        elif n == 1:
+            continue
+        elif n == 4: #too small to be handled by helper method
+            factors.append(2)
+            factors.append(2)
+        else:
+            f1,f2,psteps = pollards_rho_method_helper(n)
+            unfactored.append(f1)
+            unfactored.append(f2)
+            steps += psteps
+    return factors,steps,0
+
+def pollards_pminus1_method_helper(N,B,steps=0):
+    primes_list = get_primes()
+    a = 2 
+    i, steps = 0, 0
+    a_set = set([])
+    while True:
+        pi = primes_list[i]
+        if pi > B:
+            break
+        e = math.floor(math.log(B)/math.log(pi))
+        f = math.pow(pi,e)
+        a_hold = math.pow(a,f) % N
+        steps +=1
+        if a_hold == 0:
+            break
+        a = a_hold
+        a_set.add(a)
+        i += 1
+    for a in a_set:
+        g, g_steps = gcd(a-1,N)
+        steps += g_steps
+        if 1 < g and g < N:
+            return g, N/g, steps
+    return None, None, steps
 
 def pollards_pminus1_method(N):
-    return [],0,0
+    # use B = N^1/3 as heuristc, did not say in book what to do
+    primes_list = get_primes()
+    unfactored, factors = [N],[]
+    steps = 0
+    while len(unfactored) > 0:
+        n = unfactored.pop()
+        if n in primes_list:
+            factors.append(n)
+        elif n == 1:
+            continue
+        else:
+            B = math.pow(n,1.0/3.0)
+            f1,f2,hsteps = pollards_pminus1_method_helper(n,B)
+            steps += hsteps
+            if f1 == None: # p-1 wont work, trial division
+                flist,tsteps,_ = trial_division(n)
+                steps += tsteps
+                factors.extend(flist)
+            else:
+                unfactored.append(f1)
+                unfactored.append(f2)
+
+    return factors,steps,0
 
