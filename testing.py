@@ -6,12 +6,12 @@ import algos
 #print algos.fermats_diff_of_squares(27)
 
 success = True
-for N in xrange(5,100):
+for N in xrange(5,1000):
     print N 
     trial_factors,trial_steps,trial_left = algos.trial_division(N)
     my_factors,my_steps,my_left = algos.pollards_pminus1_method(N)
     my_factors.sort()
-    print my_factors, trial_steps,my_steps
+    #print my_factors, trial_steps,my_steps
     if trial_factors != my_factors:
         print "FAILURE at N = ", N
         print trial_factors, my_factors

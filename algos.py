@@ -135,23 +135,45 @@ def harts_one_line(N):
         factors.extend(leftover_factors)
     return factors, steps, 0
 
+def lehmans_var_of_fermat_helper(N):
+    s3n = int(math.ceil(N**(1.0/3.0)))
+    steps = 0
+    for k in xrange(1,s3n+1):
+        sk = 2.0 * math.sqrt(k*N)
+        for a in xrange(int(math.ceil(sk)),int(math.floor(sk+N**(1.0/6.0) / (4.0 * math.sqrt(k)))+1)):
+            b = a*a - 4*k*N
+            if is_square(b):
+                my_gcd, gcd_steps = gcd(a+math.sqrt(b),N)
+                steps += gcd_steps
+                return my_gcd, N/my_gcd,steps
+    return None,None,steps
+
+# steps if # of MOD operations
 #https://programmingpraxis.com/2017/08/22/lehmans-factoring-algorithm/
 def lehmans_var_of_fermat(N):
-    s3n = ceil(n ** (1.0/3.0))
-    trial_factors, steps, num_unfactored = trial_division(N,s3n)
-    
-    if num_unfactored == 1: #could only be 0 or 1
-        for k in xrange(1,s3n+1):
-            sk = 2.0 * sqrt(k*n)
-            for a in xrange(ceil(sk),floor(sk+n**(1.0/6.0) / (4.0 * sqrt(k)))+1):
-                b = a*a - 4*k*n
-                if is_square(b):
-                    my_gcd, gcd_steps = gcd(a+isqrt(b),n)
-                    steps += gcd_steps
-    return [],0,0
+    s3n = int(math.ceil(N ** (1.0/3.0)))
+    factors, steps, num_unfactored = trial_division(N,s3n)
+    unfactored = []
+    if num_unfactored == 1:
+        unfactored.append(factors[-1])
+        factors = factors[:-1]
+    primes_list = get_primes()
+
+    while len(unfactored) > 0: 
+        n = unfactored.pop()
+        if n in primes_list:
+            factors.append(n)
+        elif n == 1:
+            continue
+        else:
+            f1,f2,hsteps = lehmans_var_of_fermat_helper(n)
+            unfactored.append(f1)
+            unfactored.append(f2)
+            steps += hsteps
+    return factors, steps, 0
 
 def lehmers_factoring_method(N):
-    return [],0,0
+    return [N],0,1
 
 def pollards_rho_method_helper(N,steps=0):
     b = random.randint(1,N-3)
@@ -213,6 +235,7 @@ def pollards_pminus1_method_helper(N,B,steps=0):
             return g, N/g, steps
     return None, None, steps
 
+# steps is # of MOD operations
 def pollards_pminus1_method(N):
     # use B = N^1/3 as heuristc, did not say in book what to do
     primes_list = get_primes()
