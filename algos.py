@@ -9,7 +9,7 @@ def get_primes():
         for line in f:
             p_list.append(int(line.split(",")[1]))
     return p_list
-    
+
 #TODO: steps approp for is_square?
 def is_square(x):
     return x >= 0 and int(math.sqrt(x)) == math.sqrt(x)
