@@ -1,5 +1,7 @@
 import algos
 import miller_rabin
+import prime_generators
+import random
 
 #print algos.fermats_diff_of_squares_helper(27)
 #print algos.fermats_diff_of_squares_helper(9)
@@ -33,5 +35,16 @@ def testing_primality_checkers():
                 if is_prime != mr_is_prime:
                         print "was bad"
                
-testing_primality_checkers()
+def testing_prime_gen():
+        prime_list = algos.get_primes()
+        for i in xrange(0,100): # 1000 iterations of tests
+                print i,
+                p,_ = prime_generators.prime_gen1(random.randint(1,5))
+                print p
+                if p not in prime_list:
+                        print "FAILED"
+                        return
+        print "SUCESS"
+
+testing_prime_gen()
                 
