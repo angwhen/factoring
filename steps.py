@@ -8,6 +8,3 @@ class Steps:
         self.cuberoot_list.append(steps.cuberoot_list)
         self.sqrt_list.append(steps.sqrt_list)
         self.log_list.append(steps.log_list)
-        
-    def total_steps(self):
-        return 0 #TODO how to weight each?

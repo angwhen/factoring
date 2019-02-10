@@ -180,14 +180,13 @@ def lehmers_factoring_method(N):
 
 def fermats_diff_of_squares_prewrapper(N):
     steps = Steps()
-
     factors = []
+
     steps.num_mod += 1
     while N % 2 == 0:
         factors.append(2)
         N = N/2
         steps.num_mod += 1
-
     unfactored = [N]
     return factors, steps, unfactored
 
