@@ -13,7 +13,7 @@ def testing_factoring_algos():
         for N in xrange(5,1000):
                 print N 
                 trial_factors,trial_steps,trial_left = algos.trial_division(N)
-                my_factors,my_steps,my_left = algos.pollards_pminus1_method(N)
+                my_factors,my_steps,my_left = algos.wrapper(N,algos.lehmans_var_of_fermat)
                 my_factors.sort()
                 #print my_factors, trial_steps,my_steps
                 if trial_factors != my_factors:
@@ -46,5 +46,5 @@ def testing_prime_gen():
                         return
         print "SUCESS"
 
-testing_prime_gen()
+testing_factoring_algos()
                 
