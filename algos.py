@@ -13,16 +13,16 @@ def get_primes():
     return p_list
 
 def is_square(x):
-    steps = Steps
-    steps.sqrt_list.append(x)
+    steps = Steps()
+    steps.add_sqrt(x)
     return x >= 0 and int(math.sqrt(x)) == math.sqrt(x), steps
 
 def gcd(A,B):
     A, B = int(A), int(B)
-    steps = Steps
+    steps = Steps()
     while B != A and  B != 0:
         temp = B
-        steps.num_mod +=1
+        steps.add_mod()
         B = A % B
         A = temp
     return A, steps
@@ -30,14 +30,14 @@ def gcd(A,B):
 def trial_division(N,when_to_stop=None):
     primes_list = get_primes()
     m, pi, p = N, 0, 2
-    steps = Steps
+    steps = Steps()
     factors = []
     if when_to_stop == None:
         when_to_stop = math.sqrt(N)
-        steps.sqrt_list.append(N)
+        steps.add_sqrt(N)
 
     while (p <= when_to_stop):
-        steps.num_mod += 1
+        steps.add_mod()
         if m % p == 0:
             m = m/p
             factors.append(p)
@@ -57,7 +57,7 @@ def fermats_diff_of_squares(N):
     if N%2 == 0:
         raise ValueError("Must be given odd N")
     steps = Steps()
-    steps.sqrt_list.append(N)
+    steps.add_sqrt(N)
     x = int(math.floor(math.sqrt(N)))
     t, r = 2*x+1, x*x - N
     isq, isq_steps = is_square(r)
@@ -68,7 +68,7 @@ def fermats_diff_of_squares(N):
         isq, isq_steps = is_square(r)
         steps.append(isq_steps)
     x = (t-1)/2
-    steps.sqrt_list.append(r)
+    steps.add_sqrt(r)
     y = int(math.sqrt(r))
     return x-y, x+y, steps
 
@@ -77,9 +77,9 @@ def harts_one_line(N,L=-1):
     if L == -1:
         L = N
     for i in xrange(1,L):
-        steps.sqrt_list.append(N*i)
+        steps.add_sqrt(N*i)
         s = int(math.ceil(math.sqrt(N*i)))
-        steps.num_mod += 1
+        steps.add_mod()
         m = (s*s) % N
 
         isq, isq_steps = is_square(m)
@@ -87,7 +87,7 @@ def harts_one_line(N,L=-1):
         if (isq):
             break
 
-    steps.sqrt_list.append(m)
+    steps.add_sqrt(m)
     t = math.sqrt(m)
     f1, gcd_steps = gcd(s-t,N) 
     f2 = N/f1
@@ -98,11 +98,11 @@ def lehmans_var_of_fermat(N):
     s3n = int(math.ceil(N**(1.0/3.0)))
     steps = Steps()
     for k in xrange(1,s3n+1):
-        steps.sqrt_list.append(k*N)
+        steps.add_sqrt(k*N)
         sk = 2.0 * math.sqrt(k*N)
 
-        steps.exp_list.append((sk+N,1.0/6.0))
-        steps.sqrt_list.append(k)
+        steps.add_exp(sk+N,1.0/6.0)
+        steps.add_sqrt(k)
         for a in xrange(int(math.ceil(sk)),int(math.floor(sk+N**(1.0/6.0) / (4.0 * math.sqrt(k)))+1)):
             b = a*a - 4*k*N
         
@@ -137,7 +137,7 @@ def pollards_pminus1(N,B=None,steps=None):
     if steps == None:
         steps = Steps()
     if B == None:
-        steps.cuberoot_list.append(N)
+        steps.add_cuberoot(N)
         B = math.pow(N,1.0/3.0)
 
     primes_list = get_primes()
@@ -148,15 +148,15 @@ def pollards_pminus1(N,B=None,steps=None):
         if pi > B:
             break
 
-        steps.log_list.append(B)
-        steps.log_list.append(pi)
+        steps.add_log(B)
+        steps.add_log(pi)
         e = math.floor(math.log(B)/math.log(pi))
     
-        steps.exp_list.append((pi,e))
+        steps.add_exp(pi,e)
         f = math.pow(pi,e)
 
-        steps.exp_list.append((a,f))
-        steps.num_mod += 1
+        steps.add_exp(a,f)
+        steps.add_mod()
         a_hold = math.pow(a,f) % N
         
         if a_hold == 0:
@@ -182,11 +182,11 @@ def fermats_diff_of_squares_prewrapper(N):
     steps = Steps()
     factors = []
 
-    steps.num_mod += 1
+    steps.add_mod()
     while N % 2 == 0:
         factors.append(2)
         N = N/2
-        steps.num_mod += 1
+        steps.add_mod()
     unfactored = [N]
     return factors, steps, unfactored
 
@@ -197,7 +197,7 @@ def harts_one_line_prewrapper(N):
     isq, isq_steps = is_square(N)
     steps.append(isq_steps)
     if not isq:
-        steps.cuberoot_list.append(N)
+        steps.add_cuberoot(N)
         when_to_stop = math.pow(N,1.0/3.0)
         factors,tsteps,num_unfactored = trial_division(N, when_to_stop)
         steps.append(tsteps)
@@ -211,7 +211,7 @@ def harts_one_line_prewrapper(N):
 def lehmans_var_of_fermat_prewrapper(N):
     steps = Steps()
 
-    steps.cuberoot_list.append(N)
+    steps.add_cuberoot(N)
     s3n = int(math.ceil(N ** (1.0/3.0)))
 
     factors, tsteps, num_unfactored = trial_division(N,s3n)
@@ -235,7 +235,7 @@ def pollards_pminus1_wrapper(N):
         elif n == 1:
             continue
         else:
-            steps.cuberoot_list.append(n)
+            steps.add_cuberoot(n)
             B = math.pow(n,1.0/3.0)
 
             f1,f2,hsteps = pollards_pminus1(n,B)
