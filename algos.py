@@ -114,7 +114,12 @@ def lehmans_var_of_fermat(N):
                 return my_gcd, N/my_gcd,steps
     raise Exception("should not get here ")
 
-def pollards_rho(N,steps=0):
+def pollards_rho(N,steps=None):
+    if steps == None:
+        steps = Steps()
+    if N == 4:
+        return 2, 2, steps
+
     b = random.randint(1,N-3)
     s = random.randint(0,N-1)
     A, B, g  = s,s,1
@@ -122,35 +127,47 @@ def pollards_rho(N,steps=0):
         A = A*A + b
         B = (B*B+b)*(B*B+b)+b
         g, g_steps = gcd(A-B,N)
-        steps += g_steps
+        steps.append(g_steps)
     if g < N:
         return g, N/g, steps
     else: #continue until get a result
         return pollards_rho(N,steps)
 
-def pollards_pminus1(N,B=None,steps=0):
+def pollards_pminus1(N,B=None,steps=None):
+    if steps == None:
+        steps = Steps()
     if B == None:
+        steps.cuberoot_list.append(N)
         B = math.pow(N,1.0/3.0)
+
     primes_list = get_primes()
-    a = 2 
-    i, steps = 0, 0
+    a, i = 2, 0
     a_set = set([])
     while True:
         pi = primes_list[i]
         if pi > B:
             break
+
+        steps.log_list.append(B)
+        steps.log_list.append(pi)
         e = math.floor(math.log(B)/math.log(pi))
+    
+        steps.exp_list.append((pi,e))
         f = math.pow(pi,e)
+
+        steps.exp_list.append((a,f))
+        steps.num_mod += 1
         a_hold = math.pow(a,f) % N
-        steps +=1
+        
         if a_hold == 0:
             break
         a = a_hold
         a_set.add(a)
         i += 1
+
     for a in a_set:
         g, g_steps = gcd(a-1,N)
-        steps += g_steps
+        steps.append(g_steps)
         if 1 < g and g < N:
             return g, N/g, steps
     return None, None, steps
@@ -222,7 +239,7 @@ def pollards_pminus1_wrapper(N):
             steps.cuberoot_list.append(n)
             B = math.pow(n,1.0/3.0)
 
-            f1,f2,hsteps = pollards_pminus1_method(n,B)
+            f1,f2,hsteps = pollards_pminus1(n,B)
             steps.append(hsteps)
             if f1 == None: # p-1 wont work, trial division
                 flist,tsteps,_ = trial_division(n)
@@ -238,7 +255,7 @@ def wrapper(N, factoring_method):
     steps = Steps()
 
     if factoring_method == pollards_pminus1:
-        return pollars_pminus1_wrapper(N)      
+        return pollards_pminus1_wrapper(N)      
 
     # prewrappers recommended in joy of factoring
     if factoring_method == fermats_diff_of_squares:
@@ -265,140 +282,3 @@ def wrapper(N, factoring_method):
             unfactored.append(f2)
 
     return factors, steps, 0    
-
-
-
-"""
-# steps is # of checking for is_square
-def fermats_diff_of_squares(N):
-    primes_list = get_primes()
-    factors = []
-    steps = Steps
-
-    steps.num_mod += 1
-    while N % 2 == 0:
-        factors.append(2)
-        N = N/2
-        steps.num_mod += 1
-    
-    to_check = []
-    if N in primes_list:
-        factors.append(N)
-    elif N != 1:
-        x,y,helper_steps = fermats_diff_of_squares_helper(N)
-        to_check.append(x)
-        to_check.append(y)
-        steps += helper_steps
-    while len(to_check) != 0:
-        N = to_check.pop(0)
-        if N in primes_list:
-            factors.append(N)
-        elif N != 1:
-            x,y,helper_steps = fermats_diff_of_squares_helper(N)
-            to_check.append(x)
-            to_check.append(y)
-            steps += helper_steps
-    return factors,steps,0
-
-# steps is # of MOD operations
-def harts_one_line(N):
-    # check if N sqare
-    primes_list = get_primes()
-    factors = [N]
-    steps,num_unfactored = 0,1
-    if not is_square(N):
-        when_to_stop = math.pow(N,1.0/3.0)
-        factors,steps,num_unfactored = trial_division(N, when_to_stop)
-    if num_unfactored == 1: #not possible in trial division to have more unfactored
-        N = factors[-1]
-        factors = factors[:-1]
-        #do harts one_line
-        to_check = [N]
-        leftover_factors = []
-        while(len(to_check)>0):
-            f = to_check.pop(0)
-            if f == 1 or f in primes_list:
-                leftover_factors.append(f)
-            else:
-                hf1,hf2, hart_steps = harts_one_line_helper(f)
-                to_check.append(hf1)
-                to_check.append(hf2)
-                steps += hart_steps
-        factors.extend(leftover_factors)
-    return factors, steps, 0
-
-
-# steps if # of MOD operations
-#https://programmingpraxis.com/2017/08/22/lehmans-factoring-algorithm/
-def lehmans_var_of_fermat(N):
-    s3n = int(math.ceil(N ** (1.0/3.0)))
-    factors, steps, num_unfactored = trial_division(N,s3n)
-    unfactored = []
-    if num_unfactored == 1:
-        unfactored.append(factors[-1])
-        factors = factors[:-1]
-    primes_list = get_primes()
-
-    while len(unfactored) > 0: 
-        n = unfactored.pop()
-        if n in primes_list:
-            factors.append(n)
-        elif n == 1:
-            continue
-        else:
-            f1,f2,hsteps = lehmans_var_of_fermat_helper(n)
-            unfactored.append(f1)
-            unfactored.append(f2)
-            steps += hsteps
-    return factors, steps, 0
-
-#steps is # of MOD operations
-def pollards_rho_method(N):
-    unfactored = [N]
-    steps, factors = 0, []
-    primes_list = get_primes()
-    while len(unfactored) > 0:
-        n = unfactored.pop()
-        if n in primes_list:
-            factors.append(n)
-        elif n == 1:
-            continue
-        elif n == 4: #too small to be handled by helper method
-            factors.append(2)
-            factors.append(2)
-        else:
-            f1,f2,psteps = pollards_rho_method_helper(n)
-            unfactored.append(f1)
-            unfactored.append(f2)
-            steps += psteps
-    return factors,steps,0
-
-
-# steps is # of MOD operations
-def pollards_pminus1_method(N):
-    # use B = N^1/3 as heuristc, did not say in book what to do
-    primes_list = get_primes()
-    unfactored, factors = [N],[]
-    steps = 0
-    while len(unfactored) > 0:
-        n = unfactored.pop()
-        if n in primes_list:
-            factors.append(n)
-        elif n == 1:
-            continue
-        else:
-            B = math.pow(n,1.0/3.0)
-            f1,f2,hsteps = pollards_pminus1_method_helper(n,B)
-            steps += hsteps
-            if f1 == None: # p-1 wont work, trial division
-                flist,tsteps,_ = trial_division(n)
-                steps += tsteps
-                factors.extend(flist)
-            else:
-                unfactored.append(f1)
-                unfactored.append(f2)
-
-    return factors,steps,0
-
-"""
-
