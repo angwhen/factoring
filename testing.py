@@ -10,7 +10,7 @@ import random
 
 def testing_factoring_algos():
         success = True
-        for N in xrange(5,1000):
+        for N in xrange(5,500):
                 print N 
                 trial_factors,trial_steps,trial_left = algos.trial_division(N)
                 my_factors,my_steps,my_left = algos.wrapper(N,algos.pollards_rho)

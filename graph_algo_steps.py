@@ -31,19 +31,24 @@ def graph_algo_steps(algo_steps,filename):
    
     plt.savefig(filename)
 
-if os.path.isfile("results/f_results.p"):
-    f_algo_steps = pickle.load( open( "results/f_results.p", "rb" ) )
-if os.path.isfile("results/h_results.p"):
-    h_algo_steps = pickle.load( open( "results/h_results.p", "rb" ) )
-if os.path.isfile("results/lf_results.p"):
-    lf_algo_steps = pickle.load( open( "results/lf_results.p", "rb" ) )
-if os.path.isfile("results/pr_results.p"):
-    pr_algo_steps = pickle.load( open( "results/pr_results.p", "rb" ) )
-if os.path.isfile("results/p1_results.p"):
-    p1_algo_steps = pickle.load( open( "results/p1_results.p", "rb" ) )
+# LOAD DATA
+file_name_ending = "2digit.p"
+if os.path.isfile("results/f_%s" %file_name_ending):
+    f_algo_steps = pickle.load( open( "results/f_%s"%file_name_ending, "rb" ) )
+if os.path.isfile("results/h_%s"%file_name_ending):
+    h_algo_steps = pickle.load( open( "results/h_%s"%file_name_ending, "rb" ) )
+if os.path.isfile("results/lf_%s"%file_name_ending):
+    lf_algo_steps = pickle.load( open( "results/lf_%s"%file_name_ending, "rb" ) )
+if os.path.isfile("results/pr_%s"%file_name_ending):
+    pr_algo_steps = pickle.load( open( "results/pr_%s"%file_name_ending, "rb" ) )
+if os.path.isfile("results/p1_%s"%file_name_ending):
+    p1_algo_steps = pickle.load( open( "results/p1_%s"%file_name_ending, "rb" ) )
 
-graph_algo_steps(f_algo_steps,"results/fermats_results.png")
-graph_algo_steps(h_algo_steps,"results/harts_results.png")
-graph_algo_steps(lf_algo_steps,"results/lehmans_var_results.png")
-graph_algo_steps(pr_algo_steps,"results/pollards_rho_results.png")
-graph_algo_steps(p1_algo_steps,"results/pollards_pminus1_results.png")
+
+# GRAPH
+pic_file_name_ending = "2digit.png"
+graph_algo_steps(f_algo_steps,"results/fermats_%s"%pic_file_name_ending)
+graph_algo_steps(h_algo_steps,"results/harts_%s"%pic_file_name_ending)
+graph_algo_steps(lf_algo_steps,"results/lehmans_var_%s"%pic_file_name_ending)
+graph_algo_steps(pr_algo_steps,"results/pollards_rho_%s"%pic_file_name_ending)
+graph_algo_steps(p1_algo_steps,"results/pollards_pminus1_%s"%pic_file_name_ending)

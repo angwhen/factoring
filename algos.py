@@ -1,6 +1,7 @@
 import math
 import random
 from steps import Steps
+import powering
 
 """all methods return factors, num_steps, num_unfactored
 num_unfactored of the last factors are not prime"""
@@ -124,8 +125,8 @@ def pollards_rho(N,steps=None):
     s = random.randint(0,N-1)
     A, B, g  = s,s,1
     while (g == 1):
-        A = A*A + b
-        B = (B*B+b)*(B*B+b)+b
+        A = (A*A + b) % N 
+        B = (((B*B+b)%N)*((B*B+b)%N)+b) % N
         g, g_steps = gcd(A-B,N)
         steps.append(g_steps)
     if g < N:
@@ -150,14 +151,14 @@ def pollards_pminus1(N,B=None,steps=None):
 
         steps.add_log(B)
         steps.add_log(pi)
-        e = math.floor(math.log(B)/math.log(pi))
-    
+        e = int (math.floor(math.log(B)/math.log(pi)) )
+
         steps.add_exp(pi,e)
-        f = math.pow(pi,e)
+        f = pi**e
 
         steps.add_exp(a,f)
         steps.add_mod()
-        a_hold = math.pow(a,f) % N
+        a_hold = powering.power_mod(a,f,N) #(a**f) % N
         
         if a_hold == 0:
             break
@@ -264,7 +265,7 @@ def wrapper(N, factoring_method):
     elif factoring_method == lehmans_var_of_fermat:
         factors, psteps, unfactored = lehmans_var_of_fermat_prewrapper(N)
     elif factoring_method == pollards_rho:
-        factors, psteps, unfactored = [], Steps, [N] #no prewrapper
+        factors, psteps, unfactored = [], Steps(), [N] #no prewrapper
     steps.append(psteps)
 
     primes_list = get_primes()
