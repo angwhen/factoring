@@ -22,6 +22,7 @@ def miller_rabin(n, k=5):
     if n % 2 == 0:
         return False,steps
 
+    steps += 1
     r,d = write_as_power_of_two_times_odd_helper(n)
     #print r,d
     for i in xrange(0,k):

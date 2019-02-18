@@ -42,3 +42,16 @@ class AlgoSteps:
 
     def extend(self,AlgoSteps):
         return 0
+
+
+def get_gen_steps_list(algo_steps):
+    steps_list = algo_steps.steps_list
+    gen_steps_list = []
+    for step in steps_list:
+        gen_steps_list.append(get_gen_steps(step))
+    return gen_steps_list
+
+def get_gen_steps(steps):
+    gen_steps = steps.num_mod + len(steps.exp_list) + len(steps.cuberoot_list)
+    gen_steps += len(steps.sqrt_list) + len(steps.log_list)
+    return gen_steps
