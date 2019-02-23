@@ -39,12 +39,12 @@ def testing_prime_gen():
         prime_list = algos.get_primes()
         for i in xrange(0,100): # 1000 iterations of tests
                 print i,
-                p,_ = prime_generators.prime_gen1(random.randint(1,5))
+                p,_ = prime_generators.prime_gen1(random.randint(3,5),7)
                 print p
                 if p not in prime_list:
                         print "FAILED"
                         return
         print "SUCESS"
 
-testing_factoring_algos()
+testing_prime_gen()
                 
