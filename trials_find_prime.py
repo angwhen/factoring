@@ -24,6 +24,7 @@ ind, width = np.arange(len(gen_steps_list)), 0.35
 p1 = plt.bar(ind, gen_steps_list, width)
 
 plt.ylabel('Steps')
+plt.xlabel('N')
 plt.title('Steps to Find Prime of N Digits')
 plt.xticks(ind, n_list, rotation='vertical')
 plt.yticks(np.arange(0, max(gen_steps_list)*1.2, 10))
@@ -36,6 +37,7 @@ ind, width = np.arange(len(gen_steps_list)), 0.35
 p1 = plt.bar(ind, gen_steps_std_list, width)
 
 plt.ylabel('Steps')
+plt.xlabel('N')
 plt.title('STD of Steps to Find Prime of N Digits')
 plt.xticks(ind, n_list, rotation='vertical')
 plt.yticks(np.arange(0, max(gen_steps_std_list)*1.2, 10))
