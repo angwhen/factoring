@@ -2,6 +2,7 @@ import math
 import random
 from steps import Steps
 import powering
+import time
 
 """all methods return factors, num_steps, num_unfactored
 num_unfactored of the last factors are not prime"""
