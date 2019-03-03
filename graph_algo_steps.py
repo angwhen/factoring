@@ -2,6 +2,7 @@ import os, pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from steps import AlgoSteps
+ 
 
 def graph_algo_steps(algo_steps,filename):
     sorted_zipped = sorted(zip(algo_steps.num_list,algo_steps.steps_list))
